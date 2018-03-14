@@ -25,6 +25,8 @@ import (
 	"math/big"
 	"strconv"
 	"strings"
+
+	"gopkg.in/mgo.v2/bson"
 )
 
 // DivisionPrecision is the number of decimal places in the result when it
@@ -802,6 +804,25 @@ func (d Decimal) Truncate(precision int32) Decimal {
 		return d.rescale(-precision)
 	}
 	return d
+}
+
+//GetBSON GetBSON implements bson.Getter.
+func (me Decimal) GetBSON() (interface{}, error) {
+	return bson.ParseDecimal128(me.String())
+}
+
+// SetBSON implements bson.Setter.
+func (me Decimal) SetBSON(raw bson.Raw) error {
+	decoded := bson.Decimal128{}
+	bsonErr := raw.Unmarshal(decoded)
+	if bsonErr != nil {
+		return bsonErr
+	}
+	tmp, err := NewFromString(decoded.String())
+	if err == nil {
+		me = tmp
+	}
+	return err
 }
 
 // UnmarshalJSON implements the json.Unmarshaler interface.

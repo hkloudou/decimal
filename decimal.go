@@ -814,7 +814,7 @@ func (me Decimal) GetBSON() (interface{}, error) {
 // SetBSON implements bson.Setter.
 func (me Decimal) SetBSON(raw bson.Raw) error {
 	decoded := bson.Decimal128{}
-	bsonErr := raw.Unmarshal(decoded)
+	bsonErr := raw.Unmarshal(&decoded)
 	if bsonErr != nil {
 		return bsonErr
 	}

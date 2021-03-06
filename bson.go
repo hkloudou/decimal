@@ -14,10 +14,10 @@ func (d Decimal) MarshalBSONValue() (bsontype.Type, []byte, error) {
 
 //UnmarshalBSONValue mongo-driver
 func (d Decimal) UnmarshalBSONValue(btype bsontype.Type, value []byte) error {
-	str := ""
+	var str primitive.Decimal128
 	rv := bson.RawValue{Type: btype, Value: value}
 	rv.Unmarshal(&str)
-	x, err := NewFromString(str)
+	x, err := NewFromString(str.String())
 	if err == nil {
 		d = x
 	}
